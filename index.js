@@ -2,6 +2,9 @@ let http = require('http');
 let fs = require('fs');
 let path = require('path');
 
+console.log('proto', Object.getPrototypeOf(http.IncomingMessage).__proto__.__proto__);
+
+
 /* note, mysql must be installed (npm install mysql) and mysql server running on localhost or elsewhere*/
 let { API, database } = require('./module/api/api.js');
 

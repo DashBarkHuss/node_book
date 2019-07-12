@@ -308,7 +308,9 @@ function action_authenticate_user( request, payload ) {
 
 // Check if API.parts match a URL pattern, example: "api/user/get"
 function identify(a, b) {
-  console.log("identify");
+  console.log(`a: ${a}, b:${b}`);
+  console.log(`identify, line 3:11, API.parts: ${API.parts}`);
+
      return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
 }
 
@@ -401,7 +403,9 @@ class API {
         }
     }
     static catchAPIrequest(request) {
-        request[0] == "/" ? request = request.substring(1, request.length) : null;
+      console.log("catchAPIrequest");
+      console.trace();
+      request[0] == "/" ? request = request.substring(1, request.length) : null;
         if (request.constructor === String)
             if (request.split("/")[0] == "api") {
                 API.parts = request.split("/");
