@@ -12,6 +12,9 @@ const { Keccak } = require('sha3');
 function timestamp(full) {
     let date = new Date();
     let timestamp = date.getTime();
+    console.log(`full:${full}, return val: ${full ? Math.floor(timestamp) : Math.floor(timestamp / 1000)}`);
+    console.log(timestamp);
+    console.trace();
     return full ? Math.floor(timestamp) : Math.floor(timestamp / 1000);
 }
 
@@ -215,7 +218,8 @@ function action_login ( request, payload ) {
                     delete result.email_address; // don't send email to front-end
                     delete result.password_md5; // don't send md5 password to front-end
                     resolve(`{"success": true, "user": ${JSON.stringify(result)}, "message": "user successfully logged in!"}`);
-                } else
+                    action_create_session(request, payload); //add session--should be conditional but just adding for now, Dash
+                } else 
                     resolve(`{"success": false, "user": null, "message": "incorrect username or password"}`);
             }
             // User not found
@@ -231,8 +235,10 @@ function action_logout ( request, payload ) {
 }
 
 function action_create_session( request, payload ) {
+    console.log("action_create_session");
     // Create unique authentication token
     function create_auth_token() {
+      console.log("create_auth_token");
         let token = md5( timestamp( true ) + "");
         return token;
     }
@@ -252,7 +258,7 @@ function action_create_session( request, payload ) {
             } else { // This session doesn't exist, create it
                 // Create auth token
                 let token = create_auth_token();
-                database.connection.query("INSERT INTO session ( `user_id`, `timestamp`, `token`) VALUES( '" + payload.id + "', '" + timestamp() + "', '" + token + "')",
+                database.connection.query("INSERT INTO session ( `user_id`, `timestamp`, `token`) VALUES( '" + payload.id + "', '" + timestamp(true) + "', '" + token + "')",
                     (error, results) => {
                         if (error) throw(error);
                         resolve(`{"found" : false,
@@ -308,9 +314,6 @@ function action_authenticate_user( request, payload ) {
 
 // Check if API.parts match a URL pattern, example: "api/user/get"
 function identify(a, b) {
-  console.log(`a: ${a}, b:${b}`);
-  console.log(`identify, line 3:11, API.parts: ${API.parts}`);
-
      return API.parts[0] == "api" && API.parts[1] == a && API.parts[2] == b;
 }
 
@@ -403,8 +406,6 @@ class API {
         }
     }
     static catchAPIrequest(request) {
-      console.log("catchAPIrequest");
-      console.trace();
       request[0] == "/" ? request = request.substring(1, request.length) : null;
         if (request.constructor === String)
             if (request.split("/")[0] == "api") {
