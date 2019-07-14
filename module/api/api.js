@@ -12,8 +12,6 @@ const { Keccak } = require('sha3');
 function timestamp(full) {
     let date = new Date();
     let timestamp = date.getTime();
-    console.log(`full:${full}, return val: ${full ? Math.floor(timestamp) : Math.floor(timestamp / 1000)}`);
-    console.log(timestamp);
     return full ? Math.floor(timestamp) : Math.floor(timestamp / 1000);
 }
 
@@ -196,7 +194,6 @@ function action_update_user ( request, payload ) {
 }
 
 function action_login ( request, payload ) {
-  console.log("199", payload);
     return new Promise((resolve, reject) => {
         // First, get the user from database by payload.id
         let query = `SELECT * FROM \`user\` WHERE \`username\` = '${payload.username}'`;
@@ -235,21 +232,19 @@ function action_logout ( request, payload ) {
 }
 
 function action_create_session( request, payload ) {
-    console.log("action_create_session");
     // Create unique authentication token
     function create_auth_token() {
-      console.log("create_auth_token");
         let token = md5( timestamp( true ) + "");
         return token;
     }
     return new Promise((resolve, reject) => {
         if (!request || !request.headers || !payload)
             reject("Error: Wrong request, missing request headers, or missing payload");
-        database.connection.query("SELECT * FROM session WHERE user_id = '" + payload.id + "' LIMIT 1",
+        database.connection.query("SELECT * FROM session WHERE user_id = '" + payload.username + "' LIMIT 1",
         (error, results) => { // Check if session already exists
             if (error) throw(error);
             let result = results[0];
-            if (results && results.length != 0 && result.user_id == payload.id) {
+            if (results && results.length != 0 && result.user_id == payload.username) {
                 result.found = true;
                 resolve(`{"found": true,
                           "token": token,
@@ -258,8 +253,7 @@ function action_create_session( request, payload ) {
             } else { // This session doesn't exist, create it
                 // Create auth token
                 let token = create_auth_token();
-                console.log("260",payload);
-                database.connection.query("INSERT INTO session ( `user_id`, `timestamp`, `token`) VALUES( '" + payload.id + "', '" + timestamp() + "', '" + token + "')",
+                database.connection.query("INSERT INTO session ( `user_id`, `timestamp`, `token`) VALUES( '" + payload.username + "', '" + timestamp() + "', '" + token + "')",
                     (error, results) => {
                         if (error) throw(error);
                         resolve(`{"found" : false,
@@ -293,6 +287,7 @@ function action_get_session( request, payload ) {
 }
 
 function action_authenticate_user( request, payload ) {
+  console.log(296, payload);
     return new Promise((resolve, reject) => {
         if (!request || !request.headers || !payload)
             reject("Error: Wrong request, missing request headers, or missing payload");
