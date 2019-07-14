@@ -14,7 +14,6 @@ function timestamp(full) {
     let timestamp = date.getTime();
     console.log(`full:${full}, return val: ${full ? Math.floor(timestamp) : Math.floor(timestamp / 1000)}`);
     console.log(timestamp);
-    console.trace();
     return full ? Math.floor(timestamp) : Math.floor(timestamp / 1000);
 }
 
@@ -197,6 +196,7 @@ function action_update_user ( request, payload ) {
 }
 
 function action_login ( request, payload ) {
+  console.log("199", payload);
     return new Promise((resolve, reject) => {
         // First, get the user from database by payload.id
         let query = `SELECT * FROM \`user\` WHERE \`username\` = '${payload.username}'`;
@@ -258,7 +258,8 @@ function action_create_session( request, payload ) {
             } else { // This session doesn't exist, create it
                 // Create auth token
                 let token = create_auth_token();
-                database.connection.query("INSERT INTO session ( `user_id`, `timestamp`, `token`) VALUES( '" + payload.id + "', '" + timestamp(true) + "', '" + token + "')",
+                console.log("260",payload);
+                database.connection.query("INSERT INTO session ( `user_id`, `timestamp`, `token`) VALUES( '" + payload.id + "', '" + timestamp() + "', '" + token + "')",
                     (error, results) => {
                         if (error) throw(error);
                         resolve(`{"found" : false,
