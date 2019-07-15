@@ -215,7 +215,7 @@ function action_login ( request, payload ) {
                     delete result.email_address; // don't send email to front-end
                     delete result.password_md5; // don't send md5 password to front-end
                     resolve(`{"success": true, "user": ${JSON.stringify(result)}, "message": "user successfully logged in!"}`);
-                    action_create_session(request, payload); //add session--should be conditional but just adding for now, Dash
+                    action_create_session(request, payload).then(x=>console.log((JSON.parse(x)).token)); //add session--should be conditional but just adding for now, Dash
                 } else 
                     resolve(`{"success": false, "user": null, "message": "incorrect username or password"}`);
             }
@@ -247,7 +247,7 @@ function action_create_session( request, payload ) {
             if (results && results.length != 0 && result.user_id == payload.username) {
                 result.found = true;
                 resolve(`{"found": true,
-                          "token": token,
+                          "token": ${JSON.stringify(result.token)},
                           "session": ${JSON.stringify(result)},
                           "message": "session already exists"}`);
             } else { // This session doesn't exist, create it
