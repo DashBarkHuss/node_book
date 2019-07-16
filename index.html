@@ -72,10 +72,12 @@
            username: "username",
            password: "password" } */
         User.login = function(payload) {
+          console.log("ko");
             fetch("/api/user/login", make(payload)).then(promise => promise.json()).then(json => {
                 console.log(json);
             });
         }
+
 
         /* Confirm verification code (optional)
            payload = {
