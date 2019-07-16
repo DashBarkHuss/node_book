@@ -214,9 +214,9 @@ function action_login ( request, payload ) {
                 if (md5(payload.password) == result.password_md5) {
                     delete result.email_address; // don't send email to front-end
                     delete result.password_md5; // don't send md5 password to front-end
-                    action_create_session( request, payload );
-                    resolve(`{"success": true, "user": ${JSON.stringify(result)}, message": "user successfully logged in!"}`);
-                } else 
+                    resolve(`{"success": true, "user": ${JSON.stringify(result)}, "message": "user successfully logged in!"}`);
+                    // action_create_session(request, payload).then(x=>console.log((JSON.parse(x)).token)); //add session--should be conditional but just adding for now, Dash
+                  } else 
                     resolve(`{"success": false, "user": null, "message": "incorrect username or password"}`);
             }
             // User not found
