@@ -82,6 +82,16 @@
             });
         }
 
+        /* Logout
+          payload = {
+          username: "username"} */
+        User.logout = function(payload) {
+            fetch("/api/user/logout", make(payload)).then(promise => promise.json()).then(json => {
+                console.log(json);
+            });
+        }
+
+
 
         /* Confirm verification code (optional)
            payload = {
@@ -166,6 +176,7 @@
         value="authenticate (check if token exists in session table)" /><br />
       <input type="button" onclick="User.login({username:'felix',password:'password'})"
         value="log in as user felix / password (check session)" /><br />
+      <input type="button" onclick="User.logout({username:'felix'})" value="log out" /><br />
       <input type="button" onclick="User.tweet({user:'felix',message:'hello there, this is my tweet.'})"
         value="tweet as authenticated user" /><br />
       <input type="button" onclick="User.like({id:{user:1,tweet:1}})" value="like tweet id=1 by user id=1" /><br />

@@ -226,7 +226,17 @@ function action_login ( request, payload ) {
 
 function action_logout ( request, payload ) {
     return new Promise((resolve, reject) => {
-        /* implement */
+        // find the session from the database by the user and delete it
+        let query = `DELETE FROM \`session\` WHERE \`user_id\` = '${payload.username}'`;
+        console.log(query);
+        database.connection.query(query, (error, results) => {
+          if (error)
+              throw(error);
+          let result = results[0];
+          console.log("results[0] = ", results[0]);
+          console.log("result = ", result);
+          resolve(`{"success": true, "message": "user logged out!"}`);
+      });    
     }).catch(error => console.log(error));;
 }
 
