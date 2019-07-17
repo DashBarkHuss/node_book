@@ -215,7 +215,6 @@ function action_login ( request, payload ) {
                     delete result.email_address; // don't send email to front-end
                     delete result.password_md5; // don't send md5 password to front-end
                     resolve(`{"success": true, "user": ${JSON.stringify(result)}, "message": "user successfully logged in!"}`);
-                    // action_create_session(request, payload).then(x=>console.log((JSON.parse(x)).token)); //add session--should be conditional but just adding for now, Dash
                   } else 
                     resolve(`{"success": false, "user": null, "message": "incorrect username or password"}`);
             }
@@ -233,7 +232,6 @@ function action_logout ( request, payload ) {
 
 function action_create_session( request, payload ) {
     // Create unique authentication token
-    console.log(236)
     function create_auth_token() {
         let token = md5( timestamp( true ) + "");
         return token;
@@ -288,7 +286,6 @@ function action_get_session( request, payload ) {
 }
 
 function action_authenticate_user( request, payload ) {
-  console.log(296, payload);
     return new Promise((resolve, reject) => {
         if (!request || !request.headers || !payload)
             reject("Error: Wrong request, missing request headers, or missing payload");

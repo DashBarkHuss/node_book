@@ -72,9 +72,13 @@
            username: "username",
            password: "password" } */
         User.login = function(payload) {
-          console.log("ko");
             fetch("/api/user/login", make(payload)).then(promise => promise.json()).then(json => {
                 console.log(json);
+                if (json.success===true){
+                  return fetch("/api/session/create", make(payload))
+                }
+            }).then(promise => promise.json()).then(json => {
+                localStorage.setItem('token', json.token);
             });
         }
 
@@ -158,7 +162,7 @@
       <input type="button" onclick="User.get({id:100000000})" value="get user where user.id = 100000000" /><br />
       <input type="button" onclick="User.verify({user:'felix',verify_id:'12345'})"
         value="verify user (same as click on verify link in email)" /><br />
-      <input type="button" onclick="User.authenticate({token:'bb6cd80736ece803dd33c004f7a94278'})"
+      <input type="button" onclick="User.authenticate({token:localStorage.getItem('token')})"
         value="authenticate (check if token exists in session table)" /><br />
       <input type="button" onclick="User.login({username:'felix',password:'password'})"
         value="log in as user felix / password (check session)" /><br />
